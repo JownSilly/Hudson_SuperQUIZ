@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b2514eea6502c247a72dffed7aede67, type: 3}
-  m_Name: Question - 01
+  m_Name: Question -06
   m_EditorClassIdentifier: 
-  enunciado: "Em que ano foi lan\xE7ado o primeiro console de jogos da sony, o playstation?"
+  enunciado: "Em que ano foi lan\xE7ado o jogo 'Tetris' para computador?"
   alternativas:
-  - 1992
-  - 1994
-  - 1996
-  - 1998
-  alternativaCorreta: 1
-  id: questao-1
+  - 1984
+  - 1986
+  - 1988
+  - 1990
+  alternativaCorreta: 2
+  id: 
