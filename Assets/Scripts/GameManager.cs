@@ -16,15 +16,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite SpriteCorreta;
     [SerializeField] private Sprite SpriteIncorreta;
     [SerializeField] private Sprite spritePadrao;
+    [SerializeField] private Sprite alertResultadoCorreto;
+    [SerializeField] private Sprite alertResultadoErrado;
     [SerializeField] private GameObject inicioDoJogoCanvas;
     [SerializeField] private GameObject quizJogoCanvas;
     [SerializeField] private GameObject fimDeJogoCanvas;
+    [SerializeField] private GameObject alertResultadoCanvas;
     private Temporizador temporizador;
     private int posicaoVetor;
     private int contagemRespostasCorreta;
-    [SerializeField] private TextMeshProUGUI mensagemFimdeJogo;
+    private int naoCorreta;
+    [SerializeField] private TextMeshProUGUI alertResultadoText;
     void Start()
     {
+        fimDeJogoCanvas.SetActive(false);
+        alertResultadoCanvas.GetComponent<Canvas>().enabled = false;
         posicaoVetor = 0;
         contagemRespostasCorreta = 0;
         temporizador = GetComponent<Temporizador>();
@@ -40,7 +46,7 @@ public class GameManager : MonoBehaviour
     public void HandleOption(int alternativaSelecionada)
     {
         DisableOptionButtons();
-        PararTimer();
+        
         Image imageAlt = alternativaTMP[alternativaSelecionada].GetComponent<Image>();
         if (alternativaSelecionada == perguntaAtual.GetAlternativaCorreta())
         {
@@ -51,7 +57,9 @@ public class GameManager : MonoBehaviour
         {
             ChangeButtonSprite(imageAlt, SpriteIncorreta);
             ChangeButtonSprite(alternativaTMP[perguntaAtual.GetAlternativaCorreta()].GetComponent<Image>(), SpriteCorreta);
+            naoCorreta = contagemRespostasCorreta;
         }
+        PararTimer();
     }
     public void ChangeButtonSprite(Image imageButton, Sprite spriteChange)
     {
@@ -95,25 +103,55 @@ public class GameManager : MonoBehaviour
     {
         temporizador.Parar();
     }
-    private void OnParadaTimer()
-    { 
-        if (posicaoVetor >= perguntasTotais.Length - 1){
-
-            Debug.Log("Fimde Jogo");
-            Invoke("HabilitarTelaFimdeJogo", 1f);
-        }
-        else{
-                Invoke("AlterarPergunta",1f);
-            }
-    }
-    void AlterarPergunta()
+    private void OnParadaTimer()   
     {
-        posicaoVetor++;
-        //posicaoVetor = 0;
-        //contagemRespostasCorreta = 0;
-        PopularPergunta();
-        ReiniciarOptionsButtons();
+        if (alternativaTMP[0].GetComponent<Button>().enabled){
+            int timeIsOver = contagemRespostasCorreta;
+            AlertaResultadoInstantaneo(timeIsOver);
+        }
+        else
+        {
+            AlertaResultadoInstantaneo(naoCorreta);
+        }
+
+        //Debug.Log("Fimde Jogo");
+        //Invoke("HabilitarTelaFimdeJogo", 1f);
+
+        //Invoke("AlterarPergunta", 1f);
+
     }
+    public void AlertaResultadoInstantaneo(int naoContou)
+    {
+        alertResultadoCanvas.GetComponent<Canvas>().enabled = true;
+        if (contagemRespostasCorreta != naoContou)
+        {
+            Debug.Log("Verdadeuri");
+            alertResultadoCanvas.GetComponentInChildren<Image>().sprite = alertResultadoCorreto;
+            alertResultadoText.SetText("Parabéns, meu caro Gafanhoto!\n A resposta correta é:\n\n" + perguntaAtual.GetAlternativas()[perguntaAtual.GetAlternativaCorreta()]);
+        }
+        else
+        {
+            alertResultadoCanvas.GetComponentInChildren<Image>().sprite = alertResultadoErrado;
+            alertResultadoText.SetText("Poxa vida, essa você nao acertou!\n A resposta correta é:\n\n " + perguntaAtual.GetAlternativas()[perguntaAtual.GetAlternativaCorreta()]);
+        }
+    }
+    public void AlterarPergunta()
+    {
+        alertResultadoCanvas.GetComponent<Canvas>().enabled = false;
+        posicaoVetor++;
+        if (posicaoVetor >= perguntasTotais.Length)
+        {
+            quizJogoCanvas.SetActive(false);
+            fimDeJogoCanvas.SetActive(true);
+            fimDeJogoCanvas.GetComponentInChildren<TextMeshProUGUI>().SetText("Parabéns por ter finalizado o jogo!\n Você acertou " + contagemRespostasCorreta + " de " + perguntasTotais.Length + " perguntas");
+        }
+        else 
+        {
+            PopularPergunta();
+            ReiniciarOptionsButtons();
+        }
+    }
+    /*
     public void JogarNovamente()
     {
         posicaoVetor = 0;
@@ -129,6 +167,7 @@ public class GameManager : MonoBehaviour
         fimDeJogoCanvas.SetActive(true);
         quizJogoCanvas.SetActive(false);
     }
+    */
 
 
 

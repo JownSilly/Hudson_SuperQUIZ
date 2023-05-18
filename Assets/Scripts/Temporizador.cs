@@ -31,6 +31,7 @@ public class Temporizador : MonoBehaviour
 
             if (tempoAtual > tempoMaximo && onParadaTimer != null)
             {
+
                 Parar();
             }
         }
